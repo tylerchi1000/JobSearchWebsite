@@ -1,0 +1,10 @@
+#Requirements
+
+BeautifulSoup
+requests
+pandas
+config
+streamlit
+wordcloud
+nltk
+matplotlib
