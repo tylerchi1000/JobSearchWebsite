@@ -1,6 +1,6 @@
 #Requirements
 
-BeautifulSoup
+bs4
 requests
 pandas
 config
