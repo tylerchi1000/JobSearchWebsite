@@ -9,7 +9,7 @@ import nltk
 nltk.download('stopwords')
 from nltk.corpus import stopwords
 
-SCRAPERAPI = config.ScraperAPI
+#SCRAPERAPI = config.ScraperAPI
 
 #APIKEY = SCRAPERAPI
 
