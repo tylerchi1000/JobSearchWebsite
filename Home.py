@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-import config
+#import config
 import streamlit as st
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
@@ -103,39 +103,39 @@ State = st.sidebar.text_input('State Code', 'WA')
 City = st.sidebar.text_input('City', 'Seattle')
 Radius = st.sidebar.text_input('Search Radius', '20')
 
+
+@st.experimental_memo
+def convert_df(df):
+   return df.to_csv().encode('utf-8')
+
 #Run get_postings function when button is clicked
 if st.button('Search'):
   df = get_postings(pages)
-  csv = df.to_csv().encode('utf-8')
+  csv = convert_df(df)
   st.dataframe(df)
+  # create the word map using the code from the previous answer
+  word_map = df['Description'].str.split(expand=True).stack().value_counts().to_dict()
   
+  # remove stopwords from the word map using the English stopwords corpus
+  stop_words = set(stopwords.words('english'))
+  word_map = {word: freq for word, freq in word_map.items() if word.lower() not in stop_words}
+  
+  # create the word cloud
+  wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(word_map)
+  
+  # display the word cloud
+  fig = plt.figure(figsize=(12,6))
+  plt.imshow(wordcloud, interpolation='bilinear')
+  plt.axis('off')
+  st.pyplot(fig)
 #Download df as csv when button is clicked
-st.download_button(
-    label="Download data as CSV",
-    data=csv,
-    file_name='jobsearch.csv',
-    mime='text/csv',
-)
-  
+  st.download_button(
+      label="Download data as CSV",
+      data=csv,
+      file_name='jobsearch.csv',
+      mime='text/csv',
+  )
 
 
 
-
-# #Upate wordcloud when button is clicked
-if st.button('Update Wordcloud'):
-    # create the word map using the code from the previous answer
-    word_map = df['Description'].str.split(expand=True).stack().value_counts().to_dict()
-    
-    # remove stopwords from the word map using the English stopwords corpus
-    stop_words = set(stopwords.words('english'))
-    word_map = {word: freq for word, freq in word_map.items() if word.lower() not in stop_words}
-    
-    # create the word cloud
-    wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(word_map)
-    
-    # display the word cloud
-    plt.figure(figsize=(12,6))
-    plt.imshow(wordcloud, interpolation='bilinear')
-    plt.axis('off')
-    plt.show()
 
